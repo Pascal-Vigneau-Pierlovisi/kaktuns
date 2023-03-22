@@ -31,9 +31,6 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
-
-
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open File");
         File file = fileChooser.showOpenDialog(new Stage());
@@ -41,6 +38,7 @@ public class Controller implements Initializable{
         media = new Media(file.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
+        mediaPlayer.play();
 
     }
 
@@ -70,6 +68,11 @@ public class Controller implements Initializable{
         media = new Media(file.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
+        System.out.println("Duration: "+mediaPlayer.getTotalDuration());
+        mediaPlayer.play();
+        //mediaPlayer.getTotalDuration();
+        //mediaPlayer.getCycleDuration();
+
 
 
     }
