@@ -1,6 +1,6 @@
 package com.example.kaktuns_project_media;
 
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
+
+
 public class Controller implements Initializable{
 
     @FXML
@@ -29,17 +31,34 @@ public class Controller implements Initializable{
     private ScrollPane panePlaylist;
     @FXML
     private Label mediaName;
-
-    private MediaPlayer mediaPlayer;
+    @FXML
+    private Slider VolumeSlider;
+    @FXML
+    private Label volumeValue;
+    private MediaPlayer mediaPlayer=null;
 
     private int indexPlaylist=0;
 
+    private double volume=0.0;
+
     private ArrayList<File> listFile = new ArrayList<File>();
-    private Stage stage;
+
 
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+
+
+       VolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+           volume = newValue.doubleValue();
+           volumeValue.setText(String.valueOf(volume));
+
+           if(mediaPlayer!=null){
+
+               mediaPlayer.setVolume(newValue.doubleValue() / 100);
+           }
+        });
+
 
 
 
@@ -47,7 +66,10 @@ public class Controller implements Initializable{
     }
 
     public void playMedia() {
+
         this.mediaPlayer.play();
+
+        this.mediaPlayer.setVolume(volume/100);
 
 
     }
@@ -156,6 +178,7 @@ public class Controller implements Initializable{
         List<File> files =fileChooser.showOpenMultipleDialog(new Stage()) ;
         this.listFile.addAll(files);
 
+
         String textLabel= "Playlist sans nom \n\n";
         for(File file :listFile){
             textLabel=textLabel+"\n"+file.getName();
@@ -166,21 +189,61 @@ public class Controller implements Initializable{
 
     }
 
-    public  void deleteMediaToPlaylist(){
-
-
-
+    public  void deleteMediaToPlaylist(int indice){
+            this.listFile.remove(indice);
+    }
+    public void button(){
+        Button button = new Button();
+        button.setId("test");
 
 
     }
     public void savePlaylist(){
         System.out.println("hello");
+        try {
+            //modifier "test" avec nom de la playlist
+            FileOutputStream fileOut = new FileOutputStream("test");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.listFile);
+            out.close();
+            fileOut.close();
+            System.out.println("\nSerialisation terminée avec succès...\n");
 
-    
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
     public void loadPlaylist(){
+        this.listFile=null;
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open File");
+        File file = fileChooser.showOpenDialog(new Stage());
+
+        try {
+            FileInputStream fileIn = new FileInputStream(file.getAbsolutePath());
+            ObjectInputStream ois = new ObjectInputStream(fileIn);
+            this.listFile =  (ArrayList<File>) ois.readObject();
+            ois.close();
+            fileIn.close();
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+        String textLabel= "Playlist sans nom \n\n";
+        for(File files :listFile){
+            textLabel=textLabel+"\n"+files.getName();
+        }
+        Label label1= new Label();
+        label1.setText(textLabel.toString());
+        panePlaylist.setContent(label1);
+
 
     }
+
 
     }
 
