@@ -9,8 +9,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -35,11 +38,12 @@ public class Controller implements Initializable{
     private Slider VolumeSlider;
     @FXML
     private Label volumeValue;
+    @FXML
+    private VBox stageVbox;
     private MediaPlayer mediaPlayer=null;
-
     private int indexPlaylist=0;
+    private double volume=0;
 
-    private double volume=0.0;
 
     private ArrayList<File> listFile = new ArrayList<File>();
 
@@ -51,10 +55,8 @@ public class Controller implements Initializable{
 
        VolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
            volume = newValue.doubleValue();
-           volumeValue.setText(String.valueOf(volume));
-
+           volumeValue.setText(String.valueOf((int)volume));
            if(mediaPlayer!=null){
-
                mediaPlayer.setVolume(newValue.doubleValue() / 100);
            }
         });
@@ -192,12 +194,7 @@ public class Controller implements Initializable{
     public  void deleteMediaToPlaylist(int indice){
             this.listFile.remove(indice);
     }
-    public void button(){
-        Button button = new Button();
-        button.setId("test");
 
-
-    }
     public void savePlaylist(){
         System.out.println("hello");
         try {
@@ -216,6 +213,23 @@ public class Controller implements Initializable{
         }
 
 
+    }
+    public void popup(){
+        Stage stage = (Stage) stageVbox.getScene().getWindow();
+
+        TilePane tilepane = new TilePane();
+        Scene scene = new Scene(tilepane, 200, 200);
+        for (int i = 0; i < listFile.size(); i++) {
+            Label nomMedia = new Label(listFile.get(i).getName());
+            CheckBox checkbox = new CheckBox();
+            checkbox.setId(String.valueOf(i));
+            tilepane.getChildren().add(nomMedia);
+            tilepane.getChildren().add(checkbox);
+
+        }
+        // set the scene
+        stage.setScene(scene);
+        stage.show();
     }
     public void loadPlaylist(){
         this.listFile=null;

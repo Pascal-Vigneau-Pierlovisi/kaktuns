@@ -47,7 +47,7 @@
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.kaktuns_project_media.Controller">
+<VBox  fx:id="stageVbox" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.kaktuns_project_media.Controller">
    <children>
       <MenuBar VBox.vgrow="NEVER">
          <menus>
@@ -63,7 +63,7 @@
             <MenuItem mnemonicParsing="false" onAction="#savePlaylist" text="SavePlaylist" />
             <MenuItem mnemonicParsing="false" onAction="#loadPlaylist" text="LoadPlaylist" />
                   <MenuItem mnemonicParsing="false" onAction="#addMediaToPlaylist" text="AddMedia" />
-                  <MenuItem fx:id="deleteMedia" mnemonicParsing="false" text="DeleteMedia" />
+                  <MenuItem fx:id="deleteMedia" onAction="#popup" mnemonicParsing="false" text="DeleteMedia" />
               </items>
             </Menu>
          </menus>
