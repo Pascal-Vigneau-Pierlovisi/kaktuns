@@ -33,7 +33,7 @@ public class Main extends Application {
 
 
             stage.setTitle("Kaktuns");
-            Image image=new Image("C:\\Users\\ulwar\\IdeaProjects\\kaktuns\\src\\main\\java\\com\\example\\kaktuns_project_media\\logo.png");
+            Image image=new Image(getClass().getResourceAsStream("logo.png"));
             stage.getIcons().add(image);
 
             stage.show();
