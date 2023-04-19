@@ -7,8 +7,8 @@ import java.io.File;
  */
 public class MediaFile extends File {
 
-    private String fileName;
-    private String fileFormat;
+    private final String fileName;
+    private final String fileFormat;
 
     /**
      * Creates a new instance of MediaFile by specifying the file path as a string.
@@ -42,8 +42,11 @@ public class MediaFile extends File {
 
     public static boolean isMediaFile(File file) {
         int pointIndex = file.getName().lastIndexOf('.');
-        String fileFormat = file.getName().substring(pointIndex);
-        return fileFormat.equals(".mp3") || fileFormat.equals(".mp4");
+        if (pointIndex != -1) {
+            String fileFormat = file.getName().substring(pointIndex);
+            return fileFormat.equals(".mp3") || fileFormat.equals(".mp4");
+        }
+        return false;
     }
 
     public String getFileName() {

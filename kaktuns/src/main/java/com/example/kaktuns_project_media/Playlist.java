@@ -8,24 +8,21 @@ public class Playlist implements Serializable {
 
     private String playlistName;
     private ArrayList<MediaFile> mediaFilesList;
-    public int mediaFileIndex;
+    public int mediaFileIndex = 0;
 
     public Playlist(String playlistName, ArrayList<MediaFile> mediaFilesList) {
         this.playlistName = playlistName;
         this.mediaFilesList = mediaFilesList;
-        mediaFileIndex = 0;
     }
 
     public Playlist(String playlistName) {
         this.playlistName = playlistName;
         this.mediaFilesList = new ArrayList<>();
-        mediaFileIndex = 0;
     }
 
     public Playlist() {
         this.playlistName = "Playlist \n";
         this.mediaFilesList = new ArrayList<>();
-        mediaFileIndex = 0;
     }
 
     public void addMediaFile(MediaFile mediaFile) {
@@ -50,6 +47,7 @@ public class Playlist implements Serializable {
 
     public void clear() {
         mediaFilesList.clear();
+        mediaFileIndex = 0;
     }
 
     public String getPlaylistName() {
@@ -61,6 +59,7 @@ public class Playlist implements Serializable {
     }
 
     public void updatePlaylistName() {
+        playlistName = playlistName.substring(playlistName.indexOf(0, '\n'));
         for (MediaFile mediaFile: mediaFilesList) {
             playlistName += '\n' + mediaFile.getFileName();
         }
@@ -96,10 +95,8 @@ public class Playlist implements Serializable {
             playlist = (Playlist) in.readObject();
             in.close();
             fileIn.close();
-        } catch (IOException i) {
+        } catch (IOException | ClassNotFoundException i) {
             i.printStackTrace();
-        } catch (ClassNotFoundException c) {
-            c.printStackTrace();
         }
         return playlist;
     }
