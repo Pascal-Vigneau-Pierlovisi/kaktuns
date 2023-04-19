@@ -3,220 +3,165 @@ package com.example.kaktuns_project_media;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-
-
-
 
 public class Controller implements Initializable{
 
-    @FXML
-    private MediaView mediaView;
-
-    @FXML
-    private ScrollPane panePlaylist;
-    @FXML
-    private Label mediaName;
-    @FXML
-    private Slider VolumeSlider;
-    @FXML
-    private Label volumeValue;
-    @FXML
-    private VBox stageVbox;
+    @FXML private MediaView mediaView;
+    @FXML private ScrollPane panePlaylist;
+    @FXML private Label mediaName;
+    @FXML private Slider VolumeSlider;
+    @FXML private Label volumeValue;
+    @FXML private VBox stageVbox;
     private MediaPlayer mediaPlayer=null;
-    private int indexPlaylist=0;
-    private double volume=0;
-
-
     private ArrayList<File> listFile = new ArrayList<File>();
-
-
+    private final Player player = new Player();
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-
-
        VolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-           volume = newValue.doubleValue();
-           volumeValue.setText(String.valueOf((int)volume));
-           if(mediaPlayer!=null){
-               mediaPlayer.setVolume(newValue.doubleValue() / 100);
+           player.setVolume(newValue.doubleValue());
+           volumeValue.setText(String.valueOf((int) player.getVolume()));
+           if (player.getMediaPlayer() != null) {
+               player.getMediaPlayer().setVolume(newValue.doubleValue() / 100);
            }
-        });
-
-
-
-
-
+       });
     }
 
-    public void playMedia() {
-
-        this.mediaPlayer.play();
-
-        this.mediaPlayer.setVolume(volume/100);
-
-
-    }
-    public void pauseMedia() {
-        this.mediaPlayer.pause();
-    }
     public void runMedia(){
-       MediaPlayer.Status mediaStatus = mediaPlayer.getStatus();
-       if (mediaStatus== MediaPlayer.Status.PLAYING){
-         pauseMedia();
-       }
-       else {
-           playMedia();
-       }
+       player.run();
     }
 
-
-    public void previousMedia(){
-        if(!listFile.isEmpty() && indexPlaylist!=0){
-            pauseMedia();
-            this.indexPlaylist=this.indexPlaylist-1;
-            Media media = new Media(listFile.get(indexPlaylist).toURI().toString());
-            this.mediaPlayer = new MediaPlayer(media);
-            this.mediaView.setMediaPlayer(this.mediaPlayer);
-            mediaName.setText(listFile.get(indexPlaylist).getName());
-            playMedia();
-        }
-
+    public void previousMedia() {
+        player.previous();
+        mediaName.setText(player.getCurentMediaFile().getFileName());
     }
+
     public void nextMedia(){
-        if(!listFile.isEmpty() && indexPlaylist!=listFile.size()){
-            pauseMedia();
-            this.indexPlaylist=this.indexPlaylist+1;
-            Media media = new Media(listFile.get(indexPlaylist).toURI().toString());
-            this.mediaPlayer = new MediaPlayer(media);
-            this.mediaView.setMediaPlayer(this.mediaPlayer);
-            mediaName.setText(listFile.get(indexPlaylist).getName());
-            playMedia();
-        }
+        player.next();
+        mediaName.setText(player.getCurentMediaFile().getFileName());
     }
 
     public void resetMedia() {
+        player.reset();
+    }
 
-        if(this.mediaPlayer.getStatus() != MediaPlayer.Status.READY) {
-            this.mediaPlayer.seek(Duration.seconds(0.0));
+    public File selectFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select File");
+        return fileChooser.showOpenDialog(new Stage());
+    }
+
+    public void setMediaFile() {
+        mediaView.setMediaPlayer(player.setMediaFile());
+        mediaName.setText(player.getCurentMediaFile().getFileName());
+    }
+
+    public void setPanePlaylistLabel(String textLabel) {
+        Label label = new Label();
+        label.setText(textLabel);
+        panePlaylist.setContent(label);
+    }
+
+    public void selectMedia() throws Exception {
+        File file = selectFile();
+        if (MediaFile.isMediaFile(file)) {
+            player.getPlaylist().addMediaFile(new MediaFile(file));
+            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+            if (player.getMediaPlayer() == null) {
+                setMediaFile();
+            }
         }
     }
 
-    public void selectMedia(){
+    public List<File> selectMultipleFile() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open File");
-        File file = fileChooser.showOpenDialog(new Stage());
-        file = new File(file.getAbsolutePath());
-        Media media = new Media(file.toURI().toString());
-        this.mediaPlayer = new MediaPlayer(media);
-        this.mediaView.setMediaPlayer(this.mediaPlayer);
-        mediaName.setText(file.getName());
-
-
+        fileChooser.setTitle("Select Multiple File");
+        return fileChooser.showOpenMultipleDialog(new Stage());
     }
-    public void selectFolder(){
+
+    public void createPlaylist() throws Exception {
+        List<File> files = selectMultipleFile();
+        player.getPlaylist().clear();
+        for (File file: files) {
+            if (MediaFile.isMediaFile(file)) {
+                MediaFile mediaFile = new MediaFile(file.getPath());
+                player.getPlaylist().addMediaFile(mediaFile);
+            }
+        }
+
+        if (player.getPlaylist().getMediaFilesList().size() != 0) {
+            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+            setMediaFile();
+        }
+    }
+
+    public File selectDirectory() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(new Stage());
-        this.listFile=new ArrayList<>(Arrays.asList(Objects.requireNonNull(selectedDirectory.listFiles())));
-        String textLabel= "Playlist sans nom \n\n";
-        for(File file :listFile){
-            textLabel=textLabel+"\n"+file.getName();
+        return directoryChooser.showDialog(new Stage());
+    }
 
+    public ArrayList<File> getAllFilesFromDirectory(File selectedDirectory) {
+        return new ArrayList<>(Arrays.asList(Objects.requireNonNull(selectedDirectory.listFiles())));
+    }
+
+    public void selectFolder() throws Exception {
+        File selectedDirectory = selectDirectory();
+        if (selectedDirectory != null) {
+            ArrayList<File> files = getAllFilesFromDirectory(selectedDirectory);
+            player.getPlaylist().clear();
+            for (File file : files) {
+                if (MediaFile.isMediaFile(file)) {
+                    MediaFile mediaFile = new MediaFile(file.getPath());
+                    player.getPlaylist().addMediaFile(mediaFile);
+                }
+            }
+            if (player.getPlaylist().getMediaFilesList().size() != 0) {
+                setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+                setMediaFile();
+            }
         }
-        Label label1= new Label();
-        label1.setText(textLabel.toString());
-        panePlaylist.setContent(label1);
-
-        Media media = new Media(listFile.get(0).toURI().toString());
-        this.mediaPlayer = new MediaPlayer(media);
-        this.mediaView.setMediaPlayer(this.mediaPlayer);
-        mediaName.setText(listFile.get(0).getName());
     }
 
-    public void createPlaylist(){
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Multiple File");
-        List<File> files =fileChooser.showOpenMultipleDialog(new Stage()) ;
-        this.listFile.clear();
-        this.listFile.addAll(files);
-        String textLabel= "Playlist sans nom \n\n";
-        for(File file :listFile){
-            textLabel=textLabel+"\n"+file.getName();
-
+    public void addMediaToPlaylist() throws Exception {
+        List<File> files = selectMultipleFile();
+        for (File file: files) {
+            if (MediaFile.isMediaFile(file)) {
+                MediaFile mediaFile = new MediaFile(file.getPath());
+                player.getPlaylist().addMediaFile(mediaFile);
+            }
         }
-        Label label1= new Label();
-        label1.setText(textLabel.toString());
-        panePlaylist.setContent(label1);
-
-        Media media = new Media(listFile.get(0).toURI().toString());
-        this.mediaPlayer = new MediaPlayer(media);
-        this.mediaView.setMediaPlayer(this.mediaPlayer);
-        mediaName.setText(listFile.get(0).getName());
-
-
+        setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
     }
 
-    public void addMediaToPlaylist(){
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Multiple File");
-        List<File> files =fileChooser.showOpenMultipleDialog(new Stage()) ;
-        this.listFile.addAll(files);
-
-
-        String textLabel= "Playlist sans nom \n\n";
-        for(File file :listFile){
-            textLabel=textLabel+"\n"+file.getName();
-        }
-        Label label1= new Label();
-        label1.setText(textLabel.toString());
-        panePlaylist.setContent(label1);
-
+    public void removeMediaFromPlaylist(int index) {
+        player.getPlaylist().removeMediaFile(index);
+        setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
     }
 
-    public  void deleteMediaToPlaylist(int indice){
-            this.listFile.remove(indice);
+    public void savePlaylist() {
+        player.getPlaylist().serialize();
     }
 
-    public void savePlaylist(){
-        System.out.println("hello");
-        try {
-            //modifier "test" avec nom de la playlist
-            FileOutputStream fileOut = new FileOutputStream("test");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(this.listFile);
-            out.close();
-            fileOut.close();
-            System.out.println("\nSerialisation terminée avec succès...\n");
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+    public void loadPlaylist() {
+        player.setPlaylist(Playlist.deserialize());
+        player.getPlaylist().mediaFileIndex = 0;
+        setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+        setMediaFile();
     }
-    public void popup(){
+
+    public void popup() {
         Stage stage = (Stage) stageVbox.getScene().getWindow();
-
         TilePane tilepane = new TilePane();
         Scene scene = new Scene(tilepane, 200, 200);
         for (int i = 0; i < listFile.size(); i++) {
@@ -227,41 +172,8 @@ public class Controller implements Initializable{
             tilepane.getChildren().add(checkbox);
 
         }
-        // set the scene
         stage.setScene(scene);
         stage.show();
     }
-    public void loadPlaylist(){
-        this.listFile=null;
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open File");
-        File file = fileChooser.showOpenDialog(new Stage());
-
-        try {
-            FileInputStream fileIn = new FileInputStream(file.getAbsolutePath());
-            ObjectInputStream ois = new ObjectInputStream(fileIn);
-            this.listFile =  (ArrayList<File>) ois.readObject();
-            ois.close();
-            fileIn.close();
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-        }
-        String textLabel= "Playlist sans nom \n\n";
-        for(File files :listFile){
-            textLabel=textLabel+"\n"+files.getName();
-        }
-        Label label1= new Label();
-        label1.setText(textLabel.toString());
-        panePlaylist.setContent(label1);
-
-
-    }
-
-
-    }
-
-
-
-
-
+}
