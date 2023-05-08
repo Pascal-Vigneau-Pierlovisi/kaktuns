@@ -162,6 +162,8 @@ public class Controller implements Initializable{
 
     public void savePlaylist() {
         player.getPlaylist().serialize();
+        Playlist play=new Playlist("test");
+        play.serialize();
     }
 
 
@@ -215,14 +217,14 @@ public class Controller implements Initializable{
         vbox.setSpacing(10);
 
         player.setAllPlaylist(Playlist.deserialize());
-
         for (Playlist playlist : player.getAllPlaylist()) {
             Button btn = new Button(playlist.getPlayTitle());
             btn.setOnAction(event -> {
                 player.setPlaylist(playlist);
-                player.setMediaFile();
+
                 updatePlaylistName();
                 setPanePlaylistLabel(listViewPlaylist);
+                player.setMediaFile();
                 stage.close();
             });
             vbox.getChildren().add(btn);

@@ -76,9 +76,11 @@ public class Playlist implements Serializable {
 
     public void serialize() {
         try {
+            ArrayList<Playlist> allPlaylist = deserialize();
+            allPlaylist.add(this);
             FileOutputStream fileOut = new FileOutputStream(System.getProperty("user.dir") + "\\kaktuns\\playlists\\playlists.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(this);
+            out.writeObject(allPlaylist);
             out.close();
             fileOut.close();
         } catch (IOException i) {
@@ -86,13 +88,20 @@ public class Playlist implements Serializable {
         }
     }
 
+
     public static ArrayList<Playlist> deserialize() {
         ArrayList<Playlist> allPlaylist = null;
         try {
             FileInputStream fileIn = new FileInputStream(System.getProperty("user.dir") + "\\kaktuns\\playlists\\playlists.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
+
             try {
-                allPlaylist = (ArrayList<Playlist>) in.readObject();
+                try {
+                    allPlaylist = (ArrayList<Playlist>) in.readObject();
+                } catch (ClassCastException e) {
+                    allPlaylist = new ArrayList<>();
+                    allPlaylist.add((Playlist) in.readObject());
+                }
             } catch (EOFException e) {
                 System.out.println(e);
             }
@@ -103,5 +112,6 @@ public class Playlist implements Serializable {
         }
         return allPlaylist == null ? new ArrayList<Playlist>() : allPlaylist;
     }
+
 
 }
