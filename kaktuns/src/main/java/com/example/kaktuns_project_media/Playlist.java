@@ -1,49 +1,61 @@
 package com.example.kaktuns_project_media;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Playlist implements Serializable {
 
-    private String playlistName;
+
+
     private String playTitle;
     private ArrayList<MediaFile> mediaFilesList;
     public int mediaFileIndex = 0;
 
-    public Playlist(String playlistName, ArrayList<MediaFile> mediaFilesList) {
-        this.playlistName = playlistName;
+    public Playlist(String playTitle, ArrayList<MediaFile> mediaFilesList) {
+        this.playTitle = playTitle;
         this.mediaFilesList = mediaFilesList;
+
     }
 
-    public Playlist(String playlistName) {
-        this.playlistName = playlistName;
+    public Playlist(String playTitle) {
+        this.playTitle=playTitle;
         this.mediaFilesList = new ArrayList<>();
     }
 
     public Playlist() {
-        this.playlistName = "Playlist \n";
+        this.playTitle="Playlist \n";
         this.mediaFilesList = new ArrayList<>();
+
+    }
+    public String getPlayTitle() {return this.playTitle;}
+    public void setMediaFileIndex(int index){
+        this.mediaFileIndex=index;
     }
 
     public void addMediaFile(MediaFile mediaFile) {
         mediaFilesList.add(mediaFile);
-        updatePlaylistName(mediaFile);
+
     }
 
     public void addAllMediaFiles(List<MediaFile> mediaFiles) {
         mediaFilesList.addAll(mediaFiles);
-        updatePlaylistName(mediaFiles);
+
     }
 
     public void removeMediaFile(MediaFile mediaFile) {
         mediaFilesList.remove(mediaFile);
-        updatePlaylistName();
+
     }
 
     public void removeMediaFile(int index) {
         mediaFilesList.remove(index);
-        updatePlaylistName();
+
     }
 
     public void clear() {
@@ -51,32 +63,14 @@ public class Playlist implements Serializable {
         mediaFileIndex = 0;
     }
 
-    public String getPlaylistName() {
-        return playlistName;
-    }
+
 
     public ArrayList<MediaFile> getMediaFilesList() {
         return mediaFilesList;
     }
 
-    public void updatePlaylistName() {
-        //playlistName = playlistName.substring(playlistName.indexOf(0, '\n'));
-        String[] elements = playlistName.split("\n");
-        playlistName = elements[0] + "\n";
-        for (MediaFile mediaFile: mediaFilesList) {
-            playlistName += '\n' + mediaFile.getFileName();
-        }
-    }
 
-    public void updatePlaylistName(MediaFile mediaFile) {
-        playlistName += '\n' + mediaFile.getFileName();
-    }
 
-    public void updatePlaylistName(List<MediaFile> mediaFilesList) {
-        for (MediaFile mediaFile: mediaFilesList) {
-            playlistName += '\n' + mediaFile.getFileName();
-        }
-    }
 
     public void serialize() {
         try {
