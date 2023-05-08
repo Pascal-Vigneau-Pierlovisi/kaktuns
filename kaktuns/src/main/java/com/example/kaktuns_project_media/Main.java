@@ -17,7 +17,7 @@ public class Main extends Application {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("Kaktuns");
-            Image image = new Image(System.getProperty("user.dir") + "\\kaktuns\\images\\logo.png");
+            Image image = new Image(getClass().getResource("logo.png").toExternalForm());
             stage.getIcons().add(image);
             stage.show();
         } catch (Exception e) {
