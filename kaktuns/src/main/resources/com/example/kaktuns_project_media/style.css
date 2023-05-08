@@ -24,10 +24,22 @@
 }
 
 .button {
-  -fx-background-color: #4285f4;
+  -fx-background-color: #28a745;
+  -fx-background-radius: 50%;
+  -fx-min-width: 55px;
+  -fx-min-height: 55px;
   -fx-text-fill: #fff;
-  -fx-font-size: 14px;
-  -fx-font-family: "Roboto Condensed Bold";
+  -fx-font-size: 1.2em;
+  -fx-font-weight: bold;
+  -fx-padding: 10px 16px;
+}
+
+.button:hover {
+  -fx-background-color: #218838;
+}
+
+.button:pressed {
+  -fx-background-color: #1e7e34;
 }
 
 .label {

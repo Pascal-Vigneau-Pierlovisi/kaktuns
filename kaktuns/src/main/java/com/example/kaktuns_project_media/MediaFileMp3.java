@@ -63,7 +63,6 @@ public class MediaFileMp3 extends MediaFile {
         return coverArt != null ? Optional.of(new ByteArrayInputStream(coverArt)) : Optional.empty();
     }
 
-
     public static boolean isFileMp3(File file) {
         int pointIndex = file.getName().lastIndexOf('.');
         String fileFormat = file.getName().substring(pointIndex);

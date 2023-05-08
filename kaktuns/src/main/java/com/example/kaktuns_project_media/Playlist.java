@@ -6,52 +6,50 @@ import java.util.List;
 
 public class Playlist implements Serializable {
 
-
-
-    private String playTitle;
+    private String playlistTitle;
     private ArrayList<MediaFile> mediaFilesList;
     public int mediaFileIndex = 0;
 
-
-    public Playlist(String playTitle, ArrayList<MediaFile> mediaFilesList) {
-        this.playTitle = playTitle;
+    public Playlist(String playlistTitle, ArrayList<MediaFile> mediaFilesList) {
+        this.playlistTitle = playlistTitle;
         this.mediaFilesList = mediaFilesList;
 
     }
 
-    public Playlist(String playTitle) {
-        this.playTitle=playTitle;
+    public Playlist(String playlistTitle) {
+        this.playlistTitle = playlistTitle;
         this.mediaFilesList = new ArrayList<>();
     }
 
     public Playlist() {
-        this.playTitle="Playlist \n";
+        this.playlistTitle ="Playlist \n";
         this.mediaFilesList = new ArrayList<>();
-
     }
-    public String getPlayTitle() {return this.playTitle;}
+
+    public String getPlaylistTitle() {return this.playlistTitle;}
+
+    public void setPlaylistTitle(String playlistTitle) {
+        this.playlistTitle = playlistTitle;
+    }
+
     public void setMediaFileIndex(int index){
         this.mediaFileIndex=index;
     }
 
     public void addMediaFile(MediaFile mediaFile) {
         mediaFilesList.add(mediaFile);
-
     }
 
     public void addAllMediaFiles(List<MediaFile> mediaFiles) {
         mediaFilesList.addAll(mediaFiles);
-
     }
 
     public void removeMediaFile(MediaFile mediaFile) {
         mediaFilesList.remove(mediaFile);
-
     }
 
     public void removeMediaFile(int index) {
         mediaFilesList.remove(index);
-
     }
 
     public void clear() {
@@ -59,15 +57,9 @@ public class Playlist implements Serializable {
         mediaFileIndex = 0;
     }
 
-
-
     public ArrayList<MediaFile> getMediaFilesList() {
         return mediaFilesList;
     }
-
-
-
-
 
     public void serialize() {
         try {
@@ -83,22 +75,18 @@ public class Playlist implements Serializable {
         }
     }
 
-
     public static ArrayList<Playlist> deserialize() {
         ArrayList<Playlist> allPlaylist = null;
         try {
             FileInputStream fileIn = new FileInputStream(System.getProperty("user.dir") + "\\kaktuns\\playlists\\playlists.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-
             try {
-                try {
-                    allPlaylist = (ArrayList<Playlist>) in.readObject();
-                } catch (ClassCastException e) {
-                    allPlaylist = new ArrayList<>();
-                    allPlaylist.add((Playlist) in.readObject());
-                }
+                allPlaylist = (ArrayList<Playlist>) in.readObject();
             } catch (EOFException e) {
                 System.out.println(e);
+            } catch (ClassCastException e) {
+                allPlaylist = new ArrayList<>();
+                allPlaylist.add((Playlist) in.readObject());
             }
             in.close();
             fileIn.close();
@@ -107,6 +95,4 @@ public class Playlist implements Serializable {
         }
         return allPlaylist == null ? new ArrayList<Playlist>() : allPlaylist;
     }
-
-
 }
