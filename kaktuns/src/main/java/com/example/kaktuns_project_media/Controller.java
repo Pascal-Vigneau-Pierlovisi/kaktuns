@@ -164,13 +164,7 @@ public class Controller implements Initializable{
         player.getPlaylist().serialize();
     }
 
-    public void loadPlaylist() {
-        player.setPlaylist(Playlist.deserialize());
-        player.getPlaylist().mediaFileIndex = 0;
-        updatePlaylistName();
-        setPanePlaylistLabel(listViewPlaylist);
-        setMediaFile();
-    }
+
 
     public void deleteMediaWindow() {
         ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
@@ -209,6 +203,32 @@ public class Controller implements Initializable{
         });
 
         Scene scene = new Scene(new VBox(10, grid, button), 250, 250);
+        stage.setScene(scene);
+        stage.show();
+    }
+    public void selectPlaylist() {
+
+        Stage stage = new Stage();
+        stage.setTitle("Select Playlist");
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+
+        player.setAllPlaylist(Playlist.deserialize());
+
+        for (Playlist playlist : player.getAllPlaylist()) {
+            Button btn = new Button(playlist.getPlayTitle());
+            btn.setOnAction(event -> {
+                player.setPlaylist(playlist);
+                player.setMediaFile();
+                updatePlaylistName();
+                setPanePlaylistLabel(listViewPlaylist);
+                stage.close();
+            });
+            vbox.getChildren().add(btn);
+        }
+
+        Scene scene = new Scene(vbox, 200, 300);
         stage.setScene(scene);
         stage.show();
     }
