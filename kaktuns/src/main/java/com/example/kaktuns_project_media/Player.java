@@ -4,11 +4,14 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+
 public class Player {
 
     private double volume;
     private Playlist playlist;
     private MediaPlayer mediaPlayer;
+    private ArrayList<Playlist> allPlaylist;
 
     public Player() {
         volume = 0;
@@ -74,6 +77,14 @@ public class Player {
         pause();
     }
 
+    public ArrayList<Playlist> getAllPlaylist() {
+        return allPlaylist;
+    }
+
+    public void setAllPlaylist(ArrayList<Playlist> allPlaylist) {
+        this.allPlaylist = allPlaylist;
+    }
+
     public double getVolume() {
         return volume;
     }
@@ -84,10 +95,6 @@ public class Player {
 
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
-    }
-
-    public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        this.mediaPlayer = mediaPlayer;
     }
 
     public Playlist getPlaylist() {
