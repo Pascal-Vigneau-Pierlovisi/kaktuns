@@ -1,0 +1,49 @@
+.menu-bar {
+  -fx-background-color: #f5f5f5;
+  -fx-font-size: 14px;
+}
+
+.menu-item {
+  -fx-font-size: 14px;
+}
+
+.menu-item:separator {
+  -fx-background-color: #d9d9d9;
+}
+
+.split-pane {
+  -fx-background-color: #f5f5f5;
+}
+
+.scroll-pane {
+  -fx-background-color: #f5f5f5;
+}
+
+.anchor-pane {
+  -fx-background-color: #f5f5f5;
+}
+
+.
+
+.button {
+  -fx-background-color: #4285f4;
+  -fx-text-fill: #fff;
+  -fx-font-size: 14px;
+  -fx-font-family: "Roboto Condensed Bold";
+}
+
+.label {
+  -fx-font-size: 14px;
+}
+
+.slider {
+  -fx-background-color: #d9d9d9;
+}
+
+.slider .thumb .value {
+  -fx-font-size: 14px;
+}
+
+.media-view {
+  -fx-background-color: #000;
+}
