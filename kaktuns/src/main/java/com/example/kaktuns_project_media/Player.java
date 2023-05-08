@@ -11,6 +11,7 @@ public class Player {
     private double volume;
     private Playlist playlist;
     private MediaPlayer mediaPlayer;
+
     private ArrayList<Playlist> allPlaylist;
 
     public Player() {
@@ -77,14 +78,6 @@ public class Player {
         pause();
     }
 
-    public ArrayList<Playlist> getAllPlaylist() {
-        return allPlaylist;
-    }
-
-    public void setAllPlaylist(ArrayList<Playlist> allPlaylist) {
-        this.allPlaylist = allPlaylist;
-    }
-
     public double getVolume() {
         return volume;
     }
@@ -97,6 +90,10 @@ public class Player {
         return mediaPlayer;
     }
 
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
+    }
+
     public Playlist getPlaylist() {
         return playlist;
     }
@@ -107,6 +104,13 @@ public class Player {
 
     public MediaFile getCurentMediaFile() {
         return playlist.getMediaFilesList().get(playlist.mediaFileIndex);
+    }
+    public ArrayList<Playlist> getAllPlaylist() {
+        return allPlaylist;
+    }
+
+    public void setAllPlaylist(ArrayList<Playlist> allPlaylist) {
+        this.allPlaylist = allPlaylist;
     }
 
 
