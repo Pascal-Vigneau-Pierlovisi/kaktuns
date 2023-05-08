@@ -3,10 +3,16 @@ package com.example.kaktuns_project_media;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
@@ -24,7 +30,7 @@ public class Controller implements Initializable{
     @FXML private Label volumeValue;
     @FXML private VBox stageVbox;
     private MediaPlayer mediaPlayer=null;
-    private ArrayList<File> listFile = new ArrayList<File>();
+    //private ArrayList<File> listFile = new ArrayList<File>();
     private final Player player = new Player();
 
     @Override
@@ -160,20 +166,118 @@ public class Controller implements Initializable{
         setMediaFile();
     }
 
-    public void popup() {
-        Stage stage = (Stage) stageVbox.getScene().getWindow();
-        TilePane tilepane = new TilePane();
-        Scene scene = new Scene(tilepane, 200, 200);
-        for (int i = 0; i < listFile.size(); i++) {
-            Label nomMedia = new Label(listFile.get(i).getName());
-            CheckBox checkbox = new CheckBox();
-            checkbox.setId(String.valueOf(i));
-            tilepane.getChildren().add(nomMedia);
-            tilepane.getChildren().add(checkbox);
+    public void deleteMediaWindow() {
+        ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
+        Stage stage = new Stage();
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setVgap(5);
+        grid.setHgap(5);
 
+
+        int rowIndex = 0;
+        for (File file : listFile) {
+            CheckBox checkBox = new CheckBox();
+            Label label = new Label(file.getName());
+            grid.add(checkBox, 0, rowIndex);
+            grid.add(label, 1, rowIndex);
+            rowIndex++;
         }
+
+        Button button = new Button("Valider");
+        button.setOnAction(event -> {
+            List<MediaFile> fichiersCochees = new ArrayList<>();
+            for (int i = 0; i < listFile.size(); i++) {
+                CheckBox checkBox = (CheckBox) grid.getChildren().get(i * 2);
+                if (checkBox.isSelected()) {
+                    fichiersCochees.add(listFile.get(i));
+                }
+            }
+            for (MediaFile filecheck : fichiersCochees) {
+                player.getPlaylist().removeMediaFile(filecheck);
+                }
+
+            player.getPlaylist().updatePlaylistName();
+            player.getPlaylist().mediaFileIndex = 0;
+            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+            stage.close();
+        });
+
+        Scene scene = new Scene(new VBox(10, grid, button), 250, 250);
         stage.setScene(scene);
         stage.show();
     }
+    public void OrderMediaWindow() {
+
+        ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
+        Stage stage = new Stage();
+        stage.setTitle("Gestion de l'ordre des fichiers");
+
+        VBox vbox = new VBox();
+        Scene scene = new Scene(vbox, 400, 400);
+
+        Label label = new Label("Ordre des fichiers :");
+        vbox.getChildren().add(label);
+
+        ListView<String> listView = new ListView<>();
+        ObservableList<String> items = FXCollections.observableArrayList();
+        for (File file : listFile) {
+            items.add(file.getName());
+        }
+        listView.setItems(items);
+        vbox.getChildren().add(listView);
+
+        HBox hbox = new HBox();
+
+        Button upButton = new Button("Monter");
+        upButton.setOnAction(event -> {
+            int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+            if (selectedIndex >= 1) {
+                String selectedItem = items.remove(selectedIndex);
+                items.add(selectedIndex - 1, selectedItem);
+                listView.getSelectionModel().select(selectedIndex - 1);
+            }
+        });
+        hbox.getChildren().add(upButton);
+
+        Button downButton = new Button("Descendre");
+        downButton.setOnAction(event -> {
+            int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+            if (selectedIndex < items.size() - 1 && selectedIndex >= 0) {
+                String selectedItem = items.remove(selectedIndex);
+                items.add(selectedIndex + 1, selectedItem);
+                listView.getSelectionModel().select(selectedIndex + 1);
+            }
+        });
+        hbox.getChildren().add(downButton);
+        vbox.getChildren().add(hbox);
+
+        Button saveButton = new Button("Enregistrer");
+        saveButton.setOnAction(event -> {
+            ArrayList<MediaFile> newListFiles = new ArrayList<>();
+            for (String name : items) {
+                for (MediaFile file : listFile) {
+                    if (file.getName().equals(name)) {
+                        newListFiles.add(file);
+                        break;
+                    }
+                }
+            }
+
+            Playlist newPlaylist = new Playlist(player.getPlaylist().getPlaylistName(),newListFiles);
+            player.getPlaylist().clear();
+            player.setPlaylist(newPlaylist);
+            player.getPlaylist().updatePlaylistName();
+            player.getPlaylist().mediaFileIndex = 0;
+            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+
+            stage.close();
+        });
+        vbox.getChildren().add(saveButton);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+
 
 }

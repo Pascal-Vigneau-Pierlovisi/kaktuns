@@ -7,6 +7,7 @@ import java.util.List;
 public class Playlist implements Serializable {
 
     private String playlistName;
+    private String playTitle;
     private ArrayList<MediaFile> mediaFilesList;
     public int mediaFileIndex = 0;
 
@@ -59,7 +60,9 @@ public class Playlist implements Serializable {
     }
 
     public void updatePlaylistName() {
-        playlistName = playlistName.substring(playlistName.indexOf(0, '\n'));
+        //playlistName = playlistName.substring(playlistName.indexOf(0, '\n'));
+        String[] elements = playlistName.split("\n");
+        playlistName = elements[0] + "\n";
         for (MediaFile mediaFile: mediaFilesList) {
             playlistName += '\n' + mediaFile.getFileName();
         }

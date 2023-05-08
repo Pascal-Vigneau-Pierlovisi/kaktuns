@@ -9,8 +9,5 @@
         <module name="kaktuns" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="kaktuns" target="19" />
-    </bytecodeTargetLevel>
   </component>
 </project>

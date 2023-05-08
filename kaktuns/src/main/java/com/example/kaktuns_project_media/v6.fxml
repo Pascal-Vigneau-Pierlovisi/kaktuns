@@ -60,10 +60,11 @@
             <Menu mnemonicParsing="false" text="Playlist">
               <items>
                   <MenuItem mnemonicParsing="false" onAction="#createPlaylist" text="CreatePlaylist" />
-            <MenuItem mnemonicParsing="false" onAction="#savePlaylist" text="SavePlaylist" />
-            <MenuItem mnemonicParsing="false" onAction="#loadPlaylist" text="LoadPlaylist" />
+                  <MenuItem mnemonicParsing="false" onAction="#savePlaylist" text="SavePlaylist" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadPlaylist" text="LoadPlaylist" />
+                  <MenuItem mnemonicParsing="false" onAction="#OrderMediaWindow" text="Change Order Playlist" />
                   <MenuItem mnemonicParsing="false" onAction="#addMediaToPlaylist" text="AddMedia" />
-                  <MenuItem fx:id="deleteMedia" onAction="#popup" mnemonicParsing="false" text="DeleteMedia" />
+                  <MenuItem mnemonicParsing="false" onAction="#deleteMediaWindow" text="Delete media in Playlist" />
               </items>
             </Menu>
          </menus>
