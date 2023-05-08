@@ -75,7 +75,7 @@ public class Controller implements Initializable{
 
     public void setPanePlaylistLabel(ListView<String> listView) {
         Label titre=new Label();
-        titre.setText(player.getPlaylist().getPlayTitle());
+        titre.setText(player.getPlaylist().getPlaylistTitle());
         VBox vbox = new VBox();
         vbox.getChildren().addAll(titre, listView);
         panePlaylist.setContent(vbox);
@@ -100,8 +100,30 @@ public class Controller implements Initializable{
     }
 
     public void createPlaylist() throws Exception {
+        TextInputDialog dialog = new TextInputDialog("New Playlist");
+        dialog.setTitle("Create Playlist");
+        dialog.setHeaderText("Enter a name for the new playlist:");
+        Optional<String> result = dialog.showAndWait();
+
+        if (result.isPresent()) {
+            ArrayList<Playlist> allPlaylist = Playlist.deserialize();
+            while (true) {
+                for (Playlist playlist : allPlaylist) {
+                    if (playlist.getPlaylistTitle().equals(result.get())) {
+                        dialog.setHeaderText("Playlist " + result.get() + " already exists\nEnter a name for the new playlist:");
+                        result = dialog.showAndWait();
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
         List<File> files = selectMultipleFile();
         player.getPlaylist().clear();
+
+        result.ifPresent(s -> player.getPlaylist().setPlaylistTitle(s));
+
         for (File file: files) {
             if (MediaFile.isMediaFile(file)) {
                 MediaFile mediaFile = new MediaFile(file.getPath());
@@ -164,11 +186,7 @@ public class Controller implements Initializable{
 
     public void savePlaylist() {
         player.getPlaylist().serialize();
-        Playlist play=new Playlist("test");
-        play.serialize();
     }
-
-
 
     public void deleteMediaWindow() {
         ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
@@ -210,6 +228,7 @@ public class Controller implements Initializable{
         stage.setScene(scene);
         stage.show();
     }
+
     public void selectPlaylist() {
 
         Stage stage = new Stage();
@@ -220,7 +239,7 @@ public class Controller implements Initializable{
 
         player.setAllPlaylist(Playlist.deserialize());
         for (Playlist playlist : player.getAllPlaylist()) {
-            Button btn = new Button(playlist.getPlayTitle());
+            Button btn = new Button(playlist.getPlaylistTitle());
             btn.setOnAction(event -> {
                 player.setPlaylist(playlist);
 
@@ -236,6 +255,7 @@ public class Controller implements Initializable{
         stage.setScene(scene);
         stage.show();
     }
+
     public void OrderMediaWindow() {
 
         ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
@@ -290,7 +310,7 @@ public class Controller implements Initializable{
                 }
             }
 
-            Playlist newPlaylist = new Playlist(player.getPlaylist().getPlayTitle(),newListFiles);
+            Playlist newPlaylist = new Playlist(player.getPlaylist().getPlaylistTitle(),newListFiles);
             player.getPlaylist().clear();
             player.setPlaylist(newPlaylist);
             player.getPlaylist().mediaFileIndex = 0;
@@ -303,6 +323,7 @@ public class Controller implements Initializable{
         stage.setScene(scene);
         stage.showAndWait();
     }
+
     public void updatePlaylistName() {
         ListView<String> listView = new ListView<>();
         ObservableList<String> items = FXCollections.observableArrayList();
