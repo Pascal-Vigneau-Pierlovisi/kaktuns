@@ -7,7 +7,6 @@ import java.util.List;
 public class Playlist implements Serializable {
 
     private String playlistName;
-    private String playTitle;
     private ArrayList<MediaFile> mediaFilesList;
     public int mediaFileIndex = 0;
 
@@ -51,6 +50,10 @@ public class Playlist implements Serializable {
         mediaFileIndex = 0;
     }
 
+    public String getPlaylistTitle() {
+        return playlistName.substring(0, playlistName.indexOf('\n'));
+    }
+
     public String getPlaylistName() {
         return playlistName;
     }
@@ -80,9 +83,11 @@ public class Playlist implements Serializable {
 
     public void serialize() {
         try {
+            ArrayList<Playlist> allPlaylist = deserialize();
+            allPlaylist.add(this);
             FileOutputStream fileOut = new FileOutputStream(System.getProperty("user.dir") + "\\kaktuns\\playlists\\playlists.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(this);
+            out.writeObject(allPlaylist);
             out.close();
             fileOut.close();
         } catch (IOException i) {
@@ -90,17 +95,21 @@ public class Playlist implements Serializable {
         }
     }
 
-    public static Playlist deserialize() {
-        Playlist playlist = null;
+    public static ArrayList<Playlist> deserialize() {
+        ArrayList<Playlist> allPlaylist = null;
         try {
             FileInputStream fileIn = new FileInputStream(System.getProperty("user.dir") + "\\kaktuns\\playlists\\playlists.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            playlist = (Playlist) in.readObject();
+            try {
+                allPlaylist = (ArrayList<Playlist>) in.readObject();
+            } catch (EOFException e) {
+                System.out.println(e);
+            }
             in.close();
             fileIn.close();
         } catch (IOException | ClassNotFoundException i) {
             i.printStackTrace();
         }
-        return playlist;
+        return allPlaylist == null ? new ArrayList<Playlist>() : allPlaylist;
     }
 }
