@@ -29,8 +29,6 @@ public class Controller implements Initializable{
     @FXML private Slider VolumeSlider;
     @FXML private Label volumeValue;
     @FXML private VBox stageVbox;
-    private MediaPlayer mediaPlayer=null;
-    //private ArrayList<File> listFile = new ArrayList<File>();
     private final Player player = new Player();
 
     @Override
@@ -159,11 +157,30 @@ public class Controller implements Initializable{
         player.getPlaylist().serialize();
     }
 
-    public void loadPlaylist() {
-        player.setPlaylist(Playlist.deserialize());
-        player.getPlaylist().mediaFileIndex = 0;
-        setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
-        setMediaFile();
+    public void selectPlaylist() {
+
+        Stage stage = new Stage();
+        stage.setTitle("Select Playlist");
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+
+        player.setAllPlaylist(Playlist.deserialize());
+
+        for (Playlist playlist : player.getAllPlaylist()) {
+            Button btn = new Button(playlist.getPlaylistName());
+            btn.setOnAction(event -> {
+                player.setPlaylist(playlist);
+                player.setMediaFile();
+                setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+                stage.close();
+            });
+            vbox.getChildren().add(btn);
+        }
+
+        Scene scene = new Scene(vbox, 200, 300);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void deleteMediaWindow() {
@@ -173,7 +190,6 @@ public class Controller implements Initializable{
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setVgap(5);
         grid.setHgap(5);
-
 
         int rowIndex = 0;
         for (File file : listFile) {
@@ -207,6 +223,7 @@ public class Controller implements Initializable{
         stage.setScene(scene);
         stage.show();
     }
+
     public void OrderMediaWindow() {
 
         ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
@@ -277,7 +294,5 @@ public class Controller implements Initializable{
         stage.setScene(scene);
         stage.showAndWait();
     }
-
-
 
 }
