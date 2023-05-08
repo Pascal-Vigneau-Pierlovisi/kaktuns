@@ -14,6 +14,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("v6.fxml")));
+            root.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("Kaktuns");

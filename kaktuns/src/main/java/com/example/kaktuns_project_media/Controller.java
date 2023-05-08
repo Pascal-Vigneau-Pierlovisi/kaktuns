@@ -1,9 +1,5 @@
 package com.example.kaktuns_project_media;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,15 +7,19 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.net.URL;
+import java.util.*;
 
 public class Controller implements Initializable{
 
@@ -29,7 +29,9 @@ public class Controller implements Initializable{
     @FXML private Slider VolumeSlider;
     @FXML private Label volumeValue;
     @FXML private VBox stageVbox;
+    private MediaPlayer mediaPlayer=null;
     private final Player player = new Player();
+    private ListView<String> listViewPlaylist = new ListView<>();
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -71,17 +73,20 @@ public class Controller implements Initializable{
         mediaName.setText(player.getCurentMediaFile().getFileName());
     }
 
-    public void setPanePlaylistLabel(String textLabel) {
-        Label label = new Label();
-        label.setText(textLabel);
-        panePlaylist.setContent(label);
+    public void setPanePlaylistLabel(ListView<String> listView) {
+        Label titre=new Label();
+        titre.setText(player.getPlaylist().getPlayTitle());
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(titre, listView);
+        panePlaylist.setContent(vbox);
     }
 
     public void selectMedia() throws Exception {
         File file = selectFile();
         if (MediaFile.isMediaFile(file)) {
             player.getPlaylist().addMediaFile(new MediaFile(file));
-            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+            updatePlaylistName();
+            setPanePlaylistLabel(listViewPlaylist);
             if (player.getMediaPlayer() == null) {
                 setMediaFile();
             }
@@ -105,7 +110,8 @@ public class Controller implements Initializable{
         }
 
         if (player.getPlaylist().getMediaFilesList().size() != 0) {
-            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+            updatePlaylistName();
+            setPanePlaylistLabel(listViewPlaylist);
             setMediaFile();
         }
     }
@@ -131,7 +137,8 @@ public class Controller implements Initializable{
                 }
             }
             if (player.getPlaylist().getMediaFilesList().size() != 0) {
-                setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+                updatePlaylistName();
+                setPanePlaylistLabel(listViewPlaylist);
                 setMediaFile();
             }
         }
@@ -145,43 +152,23 @@ public class Controller implements Initializable{
                 player.getPlaylist().addMediaFile(mediaFile);
             }
         }
-        setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+        updatePlaylistName();
+        setPanePlaylistLabel(listViewPlaylist);
     }
 
     public void removeMediaFromPlaylist(int index) {
         player.getPlaylist().removeMediaFile(index);
-        setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+        updatePlaylistName();
+        setPanePlaylistLabel(listViewPlaylist);
     }
 
     public void savePlaylist() {
         player.getPlaylist().serialize();
+        Playlist play=new Playlist("test");
+        play.serialize();
     }
 
-    public void selectPlaylist() {
 
-        Stage stage = new Stage();
-        stage.setTitle("Select Playlist");
-
-        VBox vbox = new VBox();
-        vbox.setSpacing(10);
-
-        player.setAllPlaylist(Playlist.deserialize());
-
-        for (Playlist playlist : player.getAllPlaylist()) {
-            Button btn = new Button(playlist.getPlaylistName());
-            btn.setOnAction(event -> {
-                player.setPlaylist(playlist);
-                player.setMediaFile();
-                setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
-                stage.close();
-            });
-            vbox.getChildren().add(btn);
-        }
-
-        Scene scene = new Scene(vbox, 200, 300);
-        stage.setScene(scene);
-        stage.show();
-    }
 
     public void deleteMediaWindow() {
         ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
@@ -213,9 +200,9 @@ public class Controller implements Initializable{
                 player.getPlaylist().removeMediaFile(filecheck);
                 }
 
-            player.getPlaylist().updatePlaylistName();
+            updatePlaylistName();
             player.getPlaylist().mediaFileIndex = 0;
-            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+            setPanePlaylistLabel(listViewPlaylist);
             stage.close();
         });
 
@@ -223,16 +210,39 @@ public class Controller implements Initializable{
         stage.setScene(scene);
         stage.show();
     }
+    public void selectPlaylist() {
 
+        Stage stage = new Stage();
+        stage.setTitle("Select Playlist");
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+
+        player.setAllPlaylist(Playlist.deserialize());
+        for (Playlist playlist : player.getAllPlaylist()) {
+            Button btn = new Button(playlist.getPlayTitle());
+            btn.setOnAction(event -> {
+                player.setPlaylist(playlist);
+
+                updatePlaylistName();
+                setPanePlaylistLabel(listViewPlaylist);
+                player.setMediaFile();
+                stage.close();
+            });
+            vbox.getChildren().add(btn);
+        }
+
+        Scene scene = new Scene(vbox, 200, 300);
+        stage.setScene(scene);
+        stage.show();
+    }
     public void OrderMediaWindow() {
 
         ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
         Stage stage = new Stage();
         stage.setTitle("Gestion de l'ordre des fichiers");
-
         VBox vbox = new VBox();
         Scene scene = new Scene(vbox, 400, 400);
-
         Label label = new Label("Ordre des fichiers :");
         vbox.getChildren().add(label);
 
@@ -243,7 +253,6 @@ public class Controller implements Initializable{
         }
         listView.setItems(items);
         vbox.getChildren().add(listView);
-
         HBox hbox = new HBox();
 
         Button upButton = new Button("Monter");
@@ -281,12 +290,12 @@ public class Controller implements Initializable{
                 }
             }
 
-            Playlist newPlaylist = new Playlist(player.getPlaylist().getPlaylistName(),newListFiles);
+            Playlist newPlaylist = new Playlist(player.getPlaylist().getPlayTitle(),newListFiles);
             player.getPlaylist().clear();
             player.setPlaylist(newPlaylist);
-            player.getPlaylist().updatePlaylistName();
             player.getPlaylist().mediaFileIndex = 0;
-            setPanePlaylistLabel(player.getPlaylist().getPlaylistName());
+            updatePlaylistName();
+            setPanePlaylistLabel(listViewPlaylist);
 
             stage.close();
         });
@@ -294,5 +303,30 @@ public class Controller implements Initializable{
         stage.setScene(scene);
         stage.showAndWait();
     }
+    public void updatePlaylistName() {
+        ListView<String> listView = new ListView<>();
+        ObservableList<String> items = FXCollections.observableArrayList();
+        ArrayList<MediaFile> fileList = player.getPlaylist().getMediaFilesList();
+        for (File file : fileList) {
+            String fileName = file.getName();
+            items.add(fileName);
+        }
+        listView.setItems(items);
+        listView.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getClickCount() == 2) {
+                int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                player.getPlaylist().setMediaFileIndex(selectedIndex);
+                player.setMediaFile();
+                player.play();
+                mediaName.setText(player.getCurentMediaFile().getFileName());
+            }
+        });
+        listViewPlaylist = listView;
+    }
+
+
+
+
+
 
 }
