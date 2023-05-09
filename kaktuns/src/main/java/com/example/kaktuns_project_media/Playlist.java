@@ -79,6 +79,18 @@ public class Playlist implements Serializable {
         }
     }
 
+    public static void serialize(ArrayList<Playlist> allPlaylist) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(System.getProperty("user.dir") + "\\kaktuns\\playlists\\playlists.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(allPlaylist);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
     public static ArrayList<Playlist> deserialize() {
         ArrayList<Playlist> allPlaylist = null;
         try {

@@ -60,6 +60,7 @@
             <Menu mnemonicParsing="false" text="Playlist">
               <items>
                   <MenuItem mnemonicParsing="false" onAction="#createPlaylist" text="Create playlist" />
+                  <MenuItem mnemonicParsing="false" onAction="#deletePlaylist" text="Delete playlist" />
                   <MenuItem mnemonicParsing="false" onAction="#savePlaylist" text="Save playlist" />
                   <MenuItem mnemonicParsing="false" onAction="#selectPlaylist" text="Select playlist" />
                   <MenuItem mnemonicParsing="false" onAction="#OrderMediaWindow" text="Change order playlist" />

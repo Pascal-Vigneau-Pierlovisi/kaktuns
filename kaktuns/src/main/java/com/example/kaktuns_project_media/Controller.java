@@ -168,6 +168,17 @@ public class Controller implements Initializable{
         return fileChooser.showOpenMultipleDialog(new Stage());
     }
 
+    public void deletePlaylist() {
+        ArrayList<Playlist> allPlaylist = Playlist.deserialize();
+        for (Playlist playlist: allPlaylist) {
+            if (playlist.getPlaylistTitle().equals(player.getPlaylist().getPlaylistTitle())) {
+                allPlaylist.remove(playlist);
+                break;
+            }
+        }
+        Playlist.serialize(allPlaylist);
+    }
+
     public void createPlaylist() throws Exception {
         TextInputDialog dialog = new TextInputDialog("New Playlist");
         dialog.setTitle("Create Playlist");
