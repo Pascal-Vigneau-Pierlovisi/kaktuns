@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -91,6 +92,7 @@ public class Controller implements Initializable{
     }
 
     public void setMediaFile() {
+        mediaView.setMediaPlayer(null);
         mediaView.setMediaPlayer(player.setMediaFile());
         mediaName.setText(player.getCurentMediaFile().getFileName());
     }
@@ -104,6 +106,7 @@ public class Controller implements Initializable{
         VBox.setVgrow(content, Priority.NEVER);
         panePlaylist.setContent(vbox);
     }
+
     public void selectMedia() throws Exception {
         File file = selectFile();
         if (MediaFile.isMediaFile(file)) {
@@ -260,6 +263,8 @@ public class Controller implements Initializable{
 
         VBox vbox = new VBox();
         vbox.setSpacing(10);
+        vbox.setAlignment(Pos.BASELINE_CENTER);
+        vbox.setPadding(new Insets(10));
 
         player.setAllPlaylist(Playlist.deserialize());
         for (Playlist playlist : player.getAllPlaylist()) {
@@ -270,7 +275,8 @@ public class Controller implements Initializable{
                 setPanePlaylistLabel(listViewPlaylist);
                 if (player.getMediaPlayer() == null) {
                     player.setMediaFile();
-                    mediaName.setText(player.getCurentMediaFile().getFileName());
+                    setMediaFile();
+
                 }
                 stage.close();
             });
@@ -366,7 +372,8 @@ public class Controller implements Initializable{
                 int selectedIndex = listView.getSelectionModel().getSelectedIndex();
                 player.getPlaylist().setMediaFileIndex(selectedIndex);
                 player.setMediaFile();
-                mediaName.setText(player.getCurentMediaFile().getFileName());
+                setMediaFile();
+
             }
         });
         listViewPlaylist = listView;
