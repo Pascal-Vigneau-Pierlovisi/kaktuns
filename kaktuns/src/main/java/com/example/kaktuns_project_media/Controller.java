@@ -1,5 +1,6 @@
 package com.example.kaktuns_project_media;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,12 +23,23 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.scene.control.Label;
+import javafx.util.Duration;
+
 import java.io.File;
 import java.net.URL;
 import java.util.*;
 
 public class Controller implements Initializable{
 
+
+
+    @FXML
+    private Slider timelineSlider;
     @FXML private MediaView mediaView;
     @FXML private ScrollPane panePlaylist;
     @FXML private Label mediaName;
@@ -37,8 +49,18 @@ public class Controller implements Initializable{
     @FXML private Button nextButton;
     @FXML private Button previousButton;
     @FXML private Button resetButton;
+
+    @FXML
+    private Label timeLabel;
     private final Player player = new Player();
     private ListView<String> listViewPlaylist = new ListView<>();
+
+    public Timeline timeline;
+
+    private DoubleProperty totalTime;
+
+    private DoubleProperty currentTime;
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -65,10 +87,29 @@ public class Controller implements Initializable{
                 player.getMediaPlayer().setVolume(newValue.doubleValue() / 100);
             }
         });
+
+        totalTime = new SimpleDoubleProperty(0.0);
+
+        timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        currentTime = new SimpleDoubleProperty(0.0);
+
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), event -> {
+            currentTime.set(player.getMediaPlayer().getCurrentTime().toSeconds());
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+
+        // Lier le texte du Label au temps de la musique
+        timeLabel.textProperty().bind(Bindings.createStringBinding(() -> formatTime(currentTime.get(), totalTime.get()), currentTime, totalTime));
+
     }
 
     public void runMedia(){
        player.run();
+        totalTime.set(player.getMediaPlayer().getTotalDuration().toSeconds());
+        timeline.play();
     }
 
     public void previousMedia() {
@@ -101,6 +142,8 @@ public class Controller implements Initializable{
         Label titre=new Label();
         titre.setText(player.getPlaylist().getPlaylistTitle());
         VBox vbox = new VBox();
+        listView.setFixedCellSize(30.0);
+        listView.setPrefHeight(480.0);
         vbox.getChildren().addAll(titre, listView);
         Node content = vbox.getChildren().get(0);
         VBox.setVgrow(content, Priority.NEVER);
@@ -377,5 +420,15 @@ public class Controller implements Initializable{
             }
         });
         listViewPlaylist = listView;
+    }
+
+    private String formatTime(double currentTime, double totalTime) {
+        int currentMinutes = (int) currentTime / 60;
+        int currentSeconds = (int) currentTime % 60;
+
+        int totalMinutes = (int) totalTime / 60;
+        int totalSeconds = (int) totalTime % 60;
+
+        return String.format("%02d:%02d / %02d:%02d", currentMinutes, currentSeconds, totalMinutes, totalSeconds);
     }
 }

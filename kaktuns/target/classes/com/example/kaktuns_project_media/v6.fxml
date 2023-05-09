@@ -115,6 +115,7 @@
                   </Button>
                   <Slider fx:id="VolumeSlider" />
                   <Label fx:id="volumeValue" />
+                  <Label fx:id="timeLabel" />
                </children>
                <padding>
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
