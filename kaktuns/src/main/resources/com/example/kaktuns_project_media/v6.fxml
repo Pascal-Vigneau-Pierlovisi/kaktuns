@@ -87,7 +87,7 @@
       <HBox id="HBox" alignment="CENTER" fillHeight="false" maxHeight="-Infinity" prefHeight="90.0" prefWidth="900.0" spacing="10.0" VBox.vgrow="ALWAYS">
          <Label fx:id="mediaName" alignment="BASELINE_LEFT" />
          <children>
-            <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousMedia" text="&lt;&lt;" textAlignment="CENTER">
+            <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousMedia">
                <font>
                   <Font size="15.0" />
                </font>
@@ -97,12 +97,12 @@
                   <Font name="Roboto Condensed Bold" size="15.0" />
                </font>
             </Button>
-            <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextMedia" text="&gt;&gt;">
+            <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextMedia">
                <font>
                   <Font name="Roboto Condensed Bold" size="15.0" />
                </font>
             </Button>
-            <Button fx:id="resetButton" mnemonicParsing="false" onAction="#resetMedia" text="□">
+            <Button fx:id="resetButton" mnemonicParsing="false" onAction="#resetMedia">
                <font>
                   <Font name="Roboto Condensed" size="15.0" />
                </font>

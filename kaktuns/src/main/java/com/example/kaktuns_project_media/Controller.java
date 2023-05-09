@@ -31,19 +31,30 @@ public class Controller implements Initializable{
     @FXML private Slider VolumeSlider;
     @FXML private Label volumeValue;
     @FXML private Button playButton;
-    @FXML private VBox stageVbox;
+    @FXML private Button nextButton;
+    @FXML private Button previousButton;
+    @FXML private Button resetButton;
     private final Player player = new Player();
     private ListView<String> listViewPlaylist = new ListView<>();
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        Image image = new Image(getClass().getResource("play-button.png").toExternalForm());
+        Image image = new Image(getClass().getResource("play.png").toExternalForm());
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
         playButton.setGraphic(imageView);
 
-        playButton.setGraphic(imageView);
+        image = new Image(getClass().getResource("next.png").toExternalForm());
+        imageView = new ImageView(image);
+        nextButton.setGraphic(imageView);
+
+        image = new Image(getClass().getResource("previous.png").toExternalForm());
+        imageView = new ImageView(image);
+        previousButton.setGraphic(imageView);
+
+        image = new Image(getClass().getResource("reset.png").toExternalForm());
+        imageView = new ImageView(image);
+        resetButton.setGraphic(imageView);
+
         VolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             player.setVolume(newValue.doubleValue());
             volumeValue.setText(String.valueOf((int) player.getVolume()));
