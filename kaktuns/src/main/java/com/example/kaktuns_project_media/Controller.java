@@ -29,7 +29,6 @@ public class Controller implements Initializable{
     @FXML private Slider VolumeSlider;
     @FXML private Label volumeValue;
     @FXML private VBox stageVbox;
-    private MediaPlayer mediaPlayer=null;
     private final Player player = new Player();
     private ListView<String> listViewPlaylist = new ListView<>();
 
@@ -230,7 +229,6 @@ public class Controller implements Initializable{
     }
 
     public void selectPlaylist() {
-
         Stage stage = new Stage();
         stage.setTitle("Select Playlist");
 
@@ -242,10 +240,12 @@ public class Controller implements Initializable{
             Button btn = new Button(playlist.getPlaylistTitle());
             btn.setOnAction(event -> {
                 player.setPlaylist(playlist);
-
                 updatePlaylistName();
                 setPanePlaylistLabel(listViewPlaylist);
-                player.setMediaFile();
+                if (player.getMediaPlayer() == null) {
+                    player.setMediaFile();
+                    mediaName.setText(player.getCurentMediaFile().getFileName());
+                }
                 stage.close();
             });
             vbox.getChildren().add(btn);
@@ -257,7 +257,6 @@ public class Controller implements Initializable{
     }
 
     public void OrderMediaWindow() {
-
         ArrayList<MediaFile> listFile = player.getPlaylist().getMediaFilesList();
         Stage stage = new Stage();
         stage.setTitle("Gestion de l'ordre des fichiers");
@@ -334,20 +333,13 @@ public class Controller implements Initializable{
         }
         listView.setItems(items);
         listView.setOnMouseClicked((MouseEvent event) -> {
-            if (event.getClickCount() == 2) {
+            if (event.getClickCount() == 1) {
                 int selectedIndex = listView.getSelectionModel().getSelectedIndex();
                 player.getPlaylist().setMediaFileIndex(selectedIndex);
                 player.setMediaFile();
-                player.play();
                 mediaName.setText(player.getCurentMediaFile().getFileName());
             }
         });
         listViewPlaylist = listView;
     }
-
-
-
-
-
-
 }
