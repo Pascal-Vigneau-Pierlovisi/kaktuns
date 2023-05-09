@@ -11,6 +11,7 @@ public class Player {
     private double volume;
     private Playlist playlist;
     private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayerNotSelected;
 
     private ArrayList<Playlist> allPlaylist;
 
@@ -18,6 +19,7 @@ public class Player {
         volume = 0;
         playlist = new Playlist();
         mediaPlayer = null;
+        mediaPlayerNotSelected = null;
     }
 
     public void play() {
@@ -30,12 +32,22 @@ public class Player {
     }
 
     public void run() {
+        if (mediaPlayerNotSelected != null) {
+            if (mediaPlayerNotSelected.getStatus() == MediaPlayer.Status.PLAYING) {
+                mediaPlayerNotSelected.pause();
+                mediaPlayerNotSelected = null;
+            }
+        }
         MediaPlayer.Status mediaStatus = mediaPlayer.getStatus();
         if (mediaStatus == MediaPlayer.Status.PLAYING) {
             pause();
         } else {
             play();
         }
+    }
+
+    public void setMediaPlayerNotSelected(MediaPlayer mediaPlayerNotSelected) {
+        this.mediaPlayerNotSelected = mediaPlayerNotSelected;
     }
 
     public MediaPlayer setMediaFile() {

@@ -334,6 +334,9 @@ public class Controller implements Initializable{
         listView.setItems(items);
         listView.setOnMouseClicked((MouseEvent event) -> {
             if (event.getClickCount() == 1) {
+                if (player.getMediaPlayer().getStatus() == MediaPlayer.Status.PLAYING) {
+                    player.setMediaPlayerNotSelected(player.getMediaPlayer());
+                }
                 int selectedIndex = listView.getSelectionModel().getSelectedIndex();
                 player.getPlaylist().setMediaFileIndex(selectedIndex);
                 player.setMediaFile();
