@@ -125,6 +125,4 @@ public class Player {
         this.allPlaylist = allPlaylist;
     }
 
-
-
 }

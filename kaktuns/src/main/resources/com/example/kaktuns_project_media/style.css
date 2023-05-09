@@ -1,5 +1,22 @@
 .menu-bar {
-  -fx-background-color: #f5f5f5;
+  -fx-background-color: #9ea0a3;
+  -fx-font-size: 14px;
+}
+
+#HBox:not(#mediaName) {
+  -fx-justify-content: center;
+  -fx-background-color: #9ea0a3;
+  -fx-font-size: 14px;
+  -fx-min-height: 70px
+}
+
+#stageVbox {
+    -fx-background-color: #9ea0a3;
+    -fx-font-size: 14px;
+}
+
+#mediaName {
+  -fx-background-color: #9ea0a3;
   -fx-font-size: 14px;
 }
 
@@ -26,12 +43,12 @@
 .button {
   -fx-background-color: #28a745;
   -fx-background-radius: 50%;
-  -fx-min-width: 55px;
-  -fx-min-height: 55px;
+  -fx-min-width: 40px;
+  -fx-min-height: 40px;
   -fx-text-fill: #fff;
   -fx-font-size: 1.2em;
   -fx-font-weight: bold;
-  -fx-padding: 10px 16px;
+  -fx-padding: 10px 10px;
 }
 
 .button:hover {

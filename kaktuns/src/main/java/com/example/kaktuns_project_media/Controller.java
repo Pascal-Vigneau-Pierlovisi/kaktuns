@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -28,19 +30,27 @@ public class Controller implements Initializable{
     @FXML private Label mediaName;
     @FXML private Slider VolumeSlider;
     @FXML private Label volumeValue;
+    @FXML private Button playButton;
     @FXML private VBox stageVbox;
     private final Player player = new Player();
     private ListView<String> listViewPlaylist = new ListView<>();
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-       VolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-           player.setVolume(newValue.doubleValue());
-           volumeValue.setText(String.valueOf((int) player.getVolume()));
-           if (player.getMediaPlayer() != null) {
-               player.getMediaPlayer().setVolume(newValue.doubleValue() / 100);
-           }
-       });
+        Image image = new Image(getClass().getResource("play-button.png").toExternalForm());
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        playButton.setGraphic(imageView);
+
+        playButton.setGraphic(imageView);
+        VolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            player.setVolume(newValue.doubleValue());
+            volumeValue.setText(String.valueOf((int) player.getVolume()));
+            if (player.getMediaPlayer() != null) {
+                player.getMediaPlayer().setVolume(newValue.doubleValue() / 100);
+            }
+        });
     }
 
     public void runMedia(){
