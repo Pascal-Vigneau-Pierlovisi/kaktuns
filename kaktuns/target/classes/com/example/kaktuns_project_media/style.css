@@ -6,7 +6,6 @@
 #HBox {
   -fx-background-color: #9ea0a3;
   -fx-font-size: 14px;
-  -fx-min-height: 100px
 }
 
 #stageVbox {
@@ -28,6 +27,7 @@
 }
 
 .split-pane {
+  -fx-min-height: 70px;
   -fx-background-color: #f5f5f5;
 }
 

@@ -26,6 +26,10 @@ public class Playlist implements Serializable {
         this.mediaFilesList = new ArrayList<>();
     }
 
+    public boolean isEmpty() {
+        return mediaFilesList.isEmpty();
+    }
+
     public String getPlaylistTitle() {return this.playlistTitle;}
 
     public void setPlaylistTitle(String playlistTitle) {

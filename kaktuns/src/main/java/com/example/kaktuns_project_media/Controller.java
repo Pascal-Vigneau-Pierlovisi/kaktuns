@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -12,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -98,9 +100,10 @@ public class Controller implements Initializable{
         titre.setText(player.getPlaylist().getPlaylistTitle());
         VBox vbox = new VBox();
         vbox.getChildren().addAll(titre, listView);
+        Node content = vbox.getChildren().get(0);
+        VBox.setVgrow(content, Priority.NEVER);
         panePlaylist.setContent(vbox);
     }
-
     public void selectMedia() throws Exception {
         File file = selectFile();
         if (MediaFile.isMediaFile(file)) {
@@ -205,7 +208,9 @@ public class Controller implements Initializable{
     }
 
     public void savePlaylist() {
-        player.getPlaylist().serialize();
+        if (!player.getPlaylist().isEmpty()) {
+            player.getPlaylist().serialize();
+        }
     }
 
     public void deleteMediaWindow() {
